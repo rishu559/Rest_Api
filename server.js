@@ -4,6 +4,7 @@ import {APP_PORT, DB_URL} from './config';
 import routes from "./routes";
 import errorHandler from "./middlewares/errorHandler";
 import mongoose from "mongoose";
+import path from 'path'
 
 // const APP_PORT = 3000;
 
@@ -16,10 +17,12 @@ mongoose
 
 
 const app = express();
+global.appRoot = path.resolve(__dirname);
+app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use('/api',routes);
 
-
+app.use('/uploads',express.static('uploads'));
 app.use(errorHandler);
 
 app.listen(APP_PORT,()=>{

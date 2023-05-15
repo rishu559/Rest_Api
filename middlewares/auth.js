@@ -1,5 +1,6 @@
 import CustomErrorHandler from "../service/CustomErrorHandler";
 import JwtService from "../service/Jwt Service";
+import admin from "./admin";
 
 const auth = async (req,res,next) =>{
     let auth_header = req.headers.authorization;
@@ -21,6 +22,7 @@ const auth = async (req,res,next) =>{
         }
 
         req.user = user;
+    
         next();
     }
     catch(error){

@@ -3,6 +3,9 @@ import CustomErrorHandler from '../../service/CustomErrorHandler';
 import User  from '../../models/User';
 import bcrypt from 'bcrypt'
 import JwtService from '../../service/Jwt Service';
+import { REF_TOKEN } from '../../config';
+import { RefreshToken } from '../../models';
+
 
 const registerController = {
     register: async (req, res,next) => {
@@ -48,11 +51,20 @@ const registerController = {
 
         // [] store in database
         let accessToken;
+        let refreshToken;
         try{
             const result = await user.save();
             console.log(result);
+
             // Generate token
             accessToken = JwtService.sign({_id:result._id,role:result.role})
+
+            refreshToken = JwtService.sign({_id:result._id,role:result.role},'1y',REF_TOKEN)
+
+            // database whitelist
+            await RefreshToken.create({token:refreshToken});
+
+
         }
         catch(error){
             return next(error);
@@ -63,7 +75,7 @@ const registerController = {
 
         // [] send response
 
-        res.json({accessToken:accessToken});
+        res.json({accessToken:accessToken,refreshToken:refreshToken});
     }
 }
 
